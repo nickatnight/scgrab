@@ -1,7 +1,9 @@
-import sys
 import cookielib
-import mechanize
 import json
+import keys
+import mechanize
+import pbar
+import sys
 from colorme import ColorMe
 
 
@@ -43,7 +45,7 @@ class SoundCloudDL(object):
     def fetch_data(self):
         global track_id
         resolve_api = 'http://api.soundcloud.com/resolve?url='+self.url +\
-        '&client_id='+'1179300263838e79a8710078c41555e6'
+            '&client_id='+keys.ID
         print 'Grabbing track information....'
         self.br.open(resolve_api)
 
@@ -52,17 +54,20 @@ class SoundCloudDL(object):
         for k,v in j.iteritems():
             if k == 'id':
                 track_id = str(v)
+                break
 
-        stream_api = 'http://api.soundcloud.com/tracks/'+track_id+'/stream?client_id=1179300263838e79a8710078c41555e6'
+        stream_api = 'http://api.soundcloud.com/tracks/'+track_id+'/stream?client_id='+keys.ID
 
         self.page_load(stream_api)
         ColorMe.color_text('Successfully loaded mp3...', 'ok')
 
     def download(self):
+        p = pbar.ProgressBar()
         with open('test.mp3', 'wb') as f:
+            p.start()
             f.write(self.br.response().read())
-            print 'read'
-        ColorMe.color_text('Download complete.', 'ok')
+        pbar.stop = True
+        ColorMe.color_text('\nDownload complete.', 'ok')
 
     def run(self):
 
