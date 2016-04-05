@@ -56,7 +56,17 @@ class SoundCloudDL(object):
 
 
     def parse_data(self, json_data):
+        """
+        Parse the JSON request from the soundcloud resolve api. Store the data
+        in Track Info for pre depoloyment to mutagen.
+
+        json_data: JSON response from sc api
+        """
+
+        # Object that stores track meta data
         ti = TrackInfo()
+
+        # Iterate over json object for storage into *ti*
         for k,v in json_data.iteritems():
                 if k == 'id':
                     ti._id = str(v)
@@ -102,18 +112,39 @@ class SoundCloudDL(object):
         ColorMe.color_text('Successfully loaded mp3...', 'ok')
 
     def download(self):
-        p = pbar.ProgressBar()
-        with open('test.mp3', 'wb') as f:
-            p.start()
-            f.write(self.json.response())
+        """
+        Writes the response from SoundCloud stream api and saves track to
+        current working directory. Create seperate thread for progress bar and
+        wait till download completes.
+        """
 
-        pbar.stop = True
+        # Init progress bar thread
+        p = pbar.ProgressBar()
+        p.start()
+
+        try:
+            # Write JSON response
+            with open('test.mp3', 'wb') as f:
+
+                f.write(self.br.response().read())
+
+                # Stop the progress bar and notify the user
+            pbar.stop = True
+
+        except:
+            pbar.kill = True
+            pbar.stop = True
+            sys.exit('Write Error...\n')
+
         ColorMe.color_text('\nDownload complete.', 'ok')
 
     def id3_tag(self):
         pass
 
     def run(self):
+        """
+        Main
+        """
 
         self.page_load(self.url)
         ColorMe.color_text('Url verification successful.', 'ok')

@@ -24,4 +24,5 @@ class ProgressBar(threading.Thread):
             time.sleep(0.25)
             i+=1
 
+kill = False
 stop = False
