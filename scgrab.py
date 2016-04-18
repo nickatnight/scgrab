@@ -54,7 +54,7 @@ class SoundCloudDL(object):
 
         _url: url of GET request
         """
-        print 'Verifying url...'+_url
+        print 'Verifying url...\n\n'+_url
         try:
             self.br.open(_url)
         except mechanize.HTTPError as e:
@@ -126,7 +126,7 @@ class SoundCloudDL(object):
 
         try:
             # Write JSON response
-            with open('test.mp3', 'wb') as f:
+            with open(self.tags._title+'.mp3', 'wb') as f:
 
                 f.write(self.br.response().read())
 
@@ -146,14 +146,14 @@ class SoundCloudDL(object):
         """
 
         # Must init ID3 tags for appropriate header settings
-        audio = File("test.mp3", easy=True)
+        audio = File(self.tags._title+'.mp3', easy=True)
         audio.add_tags()
 
         # Save new tags
         audio['title'] = self.tags._title
         audio['artist'] = self.tags._artist
         audio['album'] = self.tags._album
-        audio.save('test.mp3')
+        audio.save(self.tags._title+'.mp3')
 
     def run(self):
         """
